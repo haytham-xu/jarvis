@@ -1,2 +1,3 @@
 
-currentConfig: ./envvar/local.yaml
+profile: local
+logBasePath: ./logs

@@ -1,6 +1,5 @@
 
 import sqlite3
-from subprocess import call
 from folderModel import Folder
 
 class SqliteService:
@@ -39,20 +38,40 @@ class SqliteService:
         c = self.__conn.cursor()
         sqlCommand = 'SELECT * FROM folder f WHERE f.code=\'%s\''% (code)
         cursor = c.execute(sqlCommand)
-        folder = cursor.fetchone()
-        res = Folder(folder[1], folder[2], folder[0])
-        res.setPurePathListByString(folder[3])
-        res.setBracketsPathListByString(folder[4])
-        res.setSquareBracketsPathListByString(folder[5])
-        res.setLastUpdatedTime(folder[6])
-        return res
+        result = cursor.fetchone()
+        c.close()
+        if result:
+            return self.buildFolder(result)
+        else:
+            raise Exception('{} not exist'.format(code))
 
     def create(self, folder: Folder):
         c = self.__conn.cursor()
         insertQuery = 'INSERT INTO folder VALUES (?, ?, ?, ?, ?, ?, ?);'
-        c.execute(insertQuery, (folder.getCode(), folder.getName(), folder.getPath(), folder.getPurePathListAsString(), folder.getBracketsPathListAsString(), folder.getSquareBracketsPathListAsString(), folder.getLastUpdatedTime()))
-        c.close()
-        self.__conn.commit()
+        try:
+            c.execute(insertQuery, (folder.getCode(), folder.getName(), folder.getPath(), folder.getPurePathListAsString(), folder.getBracketsPathListAsString(), folder.getSquareBracketsPathListAsString(), folder.getLastUpdatedTime()))
+        except Exception as err:
+            raise err
+        else:
+            self.__conn.commit()
+        finally:
+            c.close()
+        
+
+    def getAll(self):
+        # c = self.__conn.cursor()
+        # sqlCommand = 'SELECT * FROM folder;'
+        # print(c.execute(sqlCommand).fetchall())
+        # c.close()
+        pass
 
     def close(self):
         self.__conn.close()
+
+    def buildFolder(self, result):
+        res = Folder(result[1], result[2], result[0])
+        res.setPurePathListByString(result[3])
+        res.setBracketsPathListByString(result[4])
+        res.setSquareBracketsPathListByString(result[5])
+        res.setLastUpdatedTime(result[6])
+        return res
