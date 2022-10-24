@@ -18,7 +18,7 @@ class SqliteService:
 
     def dropTable(self):
         c = self.conn.cursor()
-        c.execute("DROP TABLE folder")
+        c.execute("DROP TABLE IF EXISTS folder")
         self.conn.commit()
 
     def createTable(self):

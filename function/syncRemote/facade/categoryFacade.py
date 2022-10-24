@@ -8,6 +8,7 @@ def syncCategory():
     cleanLocalCategoryLn()
     uploadLocalCategory()
     buildLocalCategoryLn()
+    config.sqlService.close()
 
 def cleanLocalCategoryLn():
     for categoryMiddlePath in config.categoryPathList:

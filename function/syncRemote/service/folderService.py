@@ -41,6 +41,7 @@ def rebuildFolderStructure():
     paths.extend(config.categoryPathList)
     paths.extend(config.duplicatePathList)
     paths.append(config.randomPath)
+    paths.append(config.toCheckPath)
     for authName in config.authDict.keys():
         paths.append(config.authBasePath + '/' + authName)
     for folderPath in paths:
@@ -48,7 +49,6 @@ def rebuildFolderStructure():
         remotePath = config.remoteBasePath + folderPath
         checkOrCreate(localPath)
         checkOrCreate(remotePath)
-    checkOrCreate(config.localBasePath + config.toCheckPath)
 
 def checkOrCreate(path):
     if not isExist(path):

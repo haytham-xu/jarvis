@@ -7,6 +7,7 @@ config = configService.Config()
 def syncDuplicate():
     cleanDuplicateUselessLn()
     buildLnforNewFolder()
+    config.sqlService.close()
     
 def cleanDuplicateUselessLn():
     for duplicateMiddlePath in config.duplicatePathList:

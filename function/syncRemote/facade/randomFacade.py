@@ -23,6 +23,7 @@ def generateRandom():
         if not folderService.isExist(localParentAbsolutePath):
             lnService.buildLnLocally(localParentAbsolutePath, remoteParentAbsolutepath)
             lnService.buildDuplicateRelativeLnRemote(config.remoteBasePath, config.randomPath + '/', folderModel.lnSuffixPath, remoteParentAbsolutepath)
+    config.sqlService.close()
         
 
 def cleanAndRebuild(path):

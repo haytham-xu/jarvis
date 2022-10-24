@@ -1,4 +1,4 @@
-from service import configService, folderService
+from service import configService, folderService, loggingService
 from repository import folderModel
 
 config = configService.Config()
@@ -9,5 +9,12 @@ def refreshRemoteIndex():
         remoteCategoryAbsolutePath = config.remoteBasePath + categoryMiddlePath
         remoteFolderAbsulotePathList = folderService.getFolderAbsolutePathRecursion(remoteCategoryAbsolutePath)
         for remoteFolderAbsulotePath in remoteFolderAbsulotePathList:
-            aFolder = folderModel.Folder(remoteFolderAbsulotePath.removeprefix(remoteCategoryAbsolutePath), config.remoteBasePath, categoryMiddlePath)
-            config.sqlService.create(aFolder)
+            remoteFolderModel = folderModel.Folder(remoteFolderAbsulotePath.removeprefix(remoteCategoryAbsolutePath), config.remoteBasePath, categoryMiddlePath)
+            existingFolderModel = config.sqlService.getByCode(remoteFolderModel.code)
+            if existingFolderModel:
+                loggingService.logging.error(config.duplicateLogTemplate.format(remoteFolderModel.getAbsolutePath(), existingFolderModel.getAbsolutePath()))
+                folderService.move(remoteFolderModel.getAbsolutePath(), config.remoteBasePath + config.toCheckPath)
+                continue
+            print("create index: ", remoteFolderAbsulotePath)
+            config.sqlService.create(remoteFolderModel)
+    config.sqlService.close()

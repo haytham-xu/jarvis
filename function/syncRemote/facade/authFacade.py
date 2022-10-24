@@ -6,6 +6,7 @@ config = configService.Config()
 def syncAuth():
     cleanAuthUselessLn()
     buildNewAuthLn()
+    config.sqlService.close()
 
 def cleanAuthUselessLn():
     cleanUselessLn(config.localBasePath)

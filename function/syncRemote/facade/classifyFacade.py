@@ -9,16 +9,18 @@ def classify():
         categoryPathWithPrefixAndMiddle = config.localBasePath + middlePath
         folderPureNameList, _ = folderService.getNameOfFoldersAndFilesWithoutRecursion(categoryPathWithPrefixAndMiddle)
         for folderPureName in folderPureNameList:
-            folderAbsolutePath = categoryPathWithPrefixAndMiddle + folderPureName
-            innerFolderPureNameList, innerFilePureNameList = folderService.getNameOfFoldersAndFilesWithoutRecursion(folderAbsolutePath)
-            folderNumer, fileNumber = folderService.getFolderAndFilesNumberRecursion(folderAbsolutePath, innerFolderPureNameList, innerFilePureNameList)
+            localFolderAbsolutePath = categoryPathWithPrefixAndMiddle + folderPureName
+            innerFolderPureNameList, innerFilePureNameList = folderService.getNameOfFoldersAndFilesWithoutRecursion(localFolderAbsolutePath)
+            folderNumer, fileNumber = folderService.getFolderAndFilesNumberRecursion(localFolderAbsolutePath, innerFolderPureNameList, innerFilePureNameList)
             targetPathTemplate = categoryPathWithPrefixAndMiddle + categoryPathWithPrefixAndMiddle[:-1].split('/')[-1]
+            print("classify: ", localFolderAbsolutePath)
             if fileNumber > 150 or folderNumer > 6:
-                folderService.move(folderAbsolutePath, targetPathTemplate + '_l')
+                folderService.move(localFolderAbsolutePath, targetPathTemplate + '_l')
             elif (folderNumer == 0 and fileNumber in range(50, 150)) or folderNumer in range(3,6):
-                folderService.move(folderAbsolutePath, targetPathTemplate + '_m')
+                folderService.move(localFolderAbsolutePath, targetPathTemplate + '_m')
             else:
-                folderService.move(folderAbsolutePath, targetPathTemplate + '_s')
+                folderService.move(localFolderAbsolutePath, targetPathTemplate + '_s')
+    config.sqlService.close()
 
 if __name__ == "__main__":
     classify()
